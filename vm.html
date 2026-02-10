@@ -45,31 +45,29 @@ if (vm_name == null) {
 	// console.log("This is a string");
 const url = API_ENDPOINT_URL + "vm_info?name=" + vm_name;
 // console.log("URL: " + url);
-fetch(url).then(response => {
-	if (!response.ok) {
-		if (response.status == 404) {
+fetch(url).then(info_response => {
+	if (!info_response.ok) {
+		if (info_response.status == 404) {
 			document.getElementById("info").innerHTML = "No such VM " + vm_name;
 		} else {
-			thrown = Error(`HTTP error! Status: ${response.status}`);
+			thrown = Error(`HTTP error! Status: ${info_response.status}`);
 			console.error(thrown);
 			throw thrown;
 		}
 	}
-	return response.json();
-}).then(response => {
-	info = response["info"];
-	status = "unresolved";
-	if (info[0] == 1) {
-		status = "Running";
-	} else if (info[0] == 5) {
-		status = "Offline";
-	}
-	html = "<p>Status: " + status + "</p>";
-	html += "<p>Min memory: " + Math.floor(info[1]/1000000) + "G (" + info[1] + "K) </p>";
-	html += "<p>Max memory: " + Math.floor(info[2]/1000000) + "G (" + info[2] + "K) </p>";
-	html += "<p>VCPUs: " + info[3] + "</p>";
-	html += "<p>Runtime (?): " + Math.floor(info[4]/10000000) + "hr (" + info[4] + ") </p>";
-	document.getElementById("info").innerHTML = html;
+	return info_response.json();
+}).then(info => {
+	const status_lookup_url = API_ENDPOINT_URL + "vm_status?state=" + info["state"];
+	fetch(status_lookup_url).then(status_lookup => {
+		html = "<p>Status: " + status_lookup["state"] + "</p>";
+		html += "<p>Min memory: " + Math.floor(info["cur_mem"]/1000000) + "G (" + info["cur_mem"] + "K) </p>";
+		html += "<p>Max memory: " + Math.floor(info["max_mem"]/1000000) + "G (" + info["max_mem"] + "K) </p>";
+		html += "<p>VCPUs: " + info["vcpu"] + "</p>";
+		html += "<p>Runtime (?): " + Math.floor(info["cputime"]/10000000) + "hr (" + info["cputime"] + ") </p>";
+		document.getElementById("info").innerHTML = html;
+	}).catch(err => {
+		
+	})
 }).catch(err => {
 	document.getElementById(id).innerHTML = "<p type=\"time_out\">ERROR: lgd-api is down!</p>" + 
 		"<p>"+err+"</p>";

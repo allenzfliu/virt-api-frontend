@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu+Mono">
 <link rel="stylesheet" href="https://allenzfliu.com/css/allenzfliu.css">
+<link rel="stylesheet" href="/root.css">
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript">
 function api_fetch(id, p_class, url, headers) {
 fetch(url).then(response => {
@@ -15,7 +17,7 @@ fetch(url).then(response => {
 }).then(response => {
 	document.getElementById(id).innerHTML = list(response["vms"], p_class);
 }).catch(err => {
-	document.getElementById(id).innerHTML = "<p type=\"time_out\">ERROR: lgd-api is down!</p>" + 
+	document.getElementById(id).innerHTML = "<p type=\"time_out\">ERROR: virt-api is down!</p>" + 
 		"<p>"+err+"</p>";
 });
 }
@@ -39,37 +41,27 @@ function list(vm_array, p_class) {
 }
 </script>
 <script type="text/javascript">
-url = 'http://api.rhodes.island:8000/vms?type=active';
+url = config.API_ENDPOINT_URL + 'vms?type=active';
 api_fetch("active_vms", "active_vm", url);
-url = 'http://api.rhodes.island:8000/vms?type=inactive';
+url = config.API_ENDPOINT_URL + 'vms?type=inactive';
 api_fetch("inactive_vms", "inactive_vm", url);
 </script>
-<style>
-html {
-	font-size: 24px;
-}
-/*.active_vm {
-	color: #ff00aa;
-}
-
-.inactive_vm {
-	color: #ff00aa;
-}*/
-</style>
 </head>
 <body>
 
 
 <div class="row">
-	<div class="column" style="background-color:#bfbbbb;">
+	<div class="column padding"></div>
+	<div class="column" id="active_bg">
 	<p>Active VMs:</p>
 	<div id="active_vms">Loading...</div>
 	</div>
 	<div class="column padding"></div>
-	<div class="column" style="background-color:#aaafaf;">
+	<div class="column" id="inactive_bg">
 	<p>Inactive VMs:</p>
 	<div id="inactive_vms">Loading...</div>
 	</div>
+	<div class="column padding"></div>
 </div>
 
 </body>

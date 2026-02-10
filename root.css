@@ -1,0 +1,19 @@
+html {
+	font-size: 24px;
+}
+
+#active_bg {
+	background-color: #bfbbbb;
+}
+
+.active_vms {
+	color: #ff00aa;
+}
+
+#inactive_bg {
+	background-color: #aaafaf;
+}
+
+.inactive_vms {
+	color: #ff00aa;
+}
