@@ -1,3 +1,3 @@
 const config = {
-    API_ENDPOINT_URL: "http://api.rhodes.island:8000/"
+    API_ENDPOINT_URL: "http://vsphere.rhodes.island/api/"
 }

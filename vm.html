@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript">
-		const API_ENDPOINT_URL = "http://api.rhodes.island:8000/"
-	</script>
+<link rel="stylesheet" href="https://allenzfliu.com/css/allenzfliu.css">
+<link rel="stylesheet" href="/root.css">
+<script type="text/javascript" src="/config.js"></script>
 </head>
 <body>
 <h1 id="header">Loading...</h1>
@@ -36,14 +36,14 @@ if (vm_name == null) {
 	document.getElementById("info").innerHTML = "Please provide a VM name!";
 } else {
 	
-	document.getElementById("start_form").action = API_ENDPOINT_URL + "vm_start?name=" + vm_name;
-	document.getElementById("stop_form").action = API_ENDPOINT_URL + "vm_stop?name=" + vm_name;
+	document.getElementById("start_form").action = config.API_ENDPOINT_URL + "vm_start?name=" + vm_name;
+	document.getElementById("stop_form").action = config.API_ENDPOINT_URL + "vm_stop?name=" + vm_name;
 	document.getElementById("start_button").innerHTML = "Start VM";
 	document.getElementById("stop_button").innerHTML = "Stop VM";
 	
 	
 	// console.log("This is a string");
-const url = API_ENDPOINT_URL + "vm_info?name=" + vm_name;
+const url = config.API_ENDPOINT_URL + "vm_info?name=" + vm_name;
 // console.log("URL: " + url);
 fetch(url).then(info_response => {
 	if (!info_response.ok) {
@@ -57,13 +57,22 @@ fetch(url).then(info_response => {
 	}
 	return info_response.json();
 }).then(info => {
-	const status_lookup_url = API_ENDPOINT_URL + "vm_status?state=" + info["state"];
+	const status_lookup_url = config.API_ENDPOINT_URL + "vm_status_lookup?state=" + info["state"];
 	fetch(status_lookup_url).then(status_lookup => {
-		html = "<p>Status: " + status_lookup["state"] + "</p>";
-		html += "<p>Min memory: " + Math.floor(info["cur_mem"]/1000000) + "G (" + info["cur_mem"] + "K) </p>";
-		html += "<p>Max memory: " + Math.floor(info["max_mem"]/1000000) + "G (" + info["max_mem"] + "K) </p>";
-		html += "<p>VCPUs: " + info["vcpu"] + "</p>";
-		html += "<p>Runtime (?): " + Math.floor(info["cputime"]/10000000) + "hr (" + info["cputime"] + ") </p>";
+		if (!status_lookup.ok) {
+			thrown = Error(`HTTP error! Status: ${status_lookup.status}`);
+			console.error(thrown);
+			throw thrown;
+		}
+		return status_lookup.json();
+	}).then(status_info => {
+		html = "<p>Status: " + status_info["vm_status"] + "</p>";
+		if (status_info["is_running"]) {
+			html += "<p>Min memory: " + Math.floor(info["cur_mem"]/1000000) + "G (" + info["cur_mem"] + "K) </p>";
+			html += "<p>Max memory: " + Math.floor(info["max_mem"]/1000000) + "G (" + info["max_mem"] + "K) </p>";
+			html += "<p>VCPUs: " + info["vcpu"] + "</p>";
+			// html += "<p>Runtime (?): " + Math.floor(info["cputime"]/10000000) + "hr (" + info["cputime"] + ") </p>";
+		}
 		document.getElementById("info").innerHTML = html;
 	}).catch(err => {
 		
