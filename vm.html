@@ -74,6 +74,8 @@ fetch(url).then(info_response => {
 			// html += "<p>Runtime (?): " + Math.floor(info["cputime"]/10000000) + "hr (" + info["cputime"] + ") </p>";
 		}
 		document.getElementById("info").innerHTML = html;
+		//next i want to load to load the vm spice info
+		const vm_spice_url = config.API_ENDPOINT_URL + "vm_viewer?name=" + vm_name;
 	}).catch(err => {
 		
 	})
